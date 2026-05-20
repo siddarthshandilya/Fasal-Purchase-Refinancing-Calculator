@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>फ़सल ख़रीद और फाइनेंस कैलकुलेटर | Fasal Purchase Calculator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & Poppins for elegant typography) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation / Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm border border-white/10">
+                    <i class="fa-solid fa-wheat-awn text-2xl text-yellow-300 animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">फ़सल ख़रीद कैलकुलेटर</h1>
+                    <p class="text-xs text-teal-100 font-medium">Fasal Purchase & Refinancing Simulator</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-full border border-white/5 text-sm">
+                <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full inline-block animate-ping"></span>
+                <span class="text-emerald-100 font-semibold text-xs md:text-sm">Mandi Smart Trader Mode Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        
+        <!-- Welcome banner -->
+        <div class="bg-white rounded-2xl p-6 mb-6 card-shadow border border-slate-100 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-48 h-48 bg-teal-50 rounded-full -z-10 opacity-60"></div>
+            <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-indigo-50 rounded-full -z-10 opacity-60"></div>
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-2 max-w-3xl">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">लेवरेज ट्रेडिंग गाइड (Leverage Concept)</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800">लिमिटेड बजट से अनलिमिटेड ख़रीदी करें!</h2>
+                    <p class="text-slate-600 text-sm md:text-base leading-relaxed">
+                        यह ऐप आपको यह समझने में मदद करता है कि अपनी शुरुआती पूँजी से फसल खरीदकर, उसपर वेयरहाउस / मण्डी 
+                        फाइनेंस लेकर, दोबारा फिर से फसल खरीदकर आप अपने <strong>कुल स्टॉक (Total Quintals)</strong> को 
+                        कितना गुणा बढ़ा सकते हैं।
+                    </p>
+                </div>
+                <div class="flex-shrink-0 bg-gradient-to-tr from-teal-500 to-indigo-600 p-0.5 rounded-2xl shadow-md">
+                    <div class="bg-white rounded-[14px] p-4 text-center">
+                        <span class="block text-xs text-slate-400 font-semibold">Refinance Stop Limit</span>
+                        <span class="block text-xl font-bold text-indigo-600">₹2,00,000+</span>
+                        <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Automated Loop</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CALCULATOR & RESULTS GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Side: Inputs Column (Span 5) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+                    <div class="flex items-center gap-2 pb-4 mb-5 border-b border-slate-100">
+                        <i class="fa-solid fa-sliders text-teal-600 text-xl"></i>
+                        <h3 class="font-bold text-lg text-slate-800">इनपुट बॉक्स (Enter Details)</h3>
+                    </div>
+
+                    <form id="calcForm" onsubmit="event.preventDefault();" class="space-y-5">
+                        
+                        <!-- Input 1: Available Capital -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label for="initialCapital" class="text-sm font-bold text-slate-700 block">
+                                    1. आपके पास कितना पैसा है? <span class="text-xs text-slate-400 font-normal">(Initial Capital)</span>
+                                </label>
+                                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded" id="initialCapitalWord">₹10 Lakhs</span>
+                            </div>
+                            <div class="relative rounded-xl shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 font-semibold">₹</span>
+                                </div>
+                                <input type="number" name="initialCapital" id="initialCapital" min="50000" step="5000" value="1000000"
+                                    class="block w-full pl-8 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg font-bold text-slate-800 transition-all duration-200"
+                                    placeholder="Enter available money">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 text-xs font-semibold">INR</span>
+                                </div>
+                            </div>
+                            <input type="range" id="initialCapitalSlider" min="100000" max="10000000" step="50000" value="1000000" 
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <!-- Input 2: Average Purchase Rate -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label for="avgRate" class="text-sm font-bold text-slate-700 block">
+                                    2. फसल की औसत दर क्या है? <span class="text-xs text-slate-400 font-normal">(Avg Rate / Quintal)</span>
+                                </label>
+                                <span class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded" id="avgRateVal">₹2,500 / Qtl</span>
+                            </div>
+                            <div class="relative rounded-xl shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 font-semibold">₹</span>
+                                </div>
+                                <input type="number" name="avgRate" id="avgRate" min="500" step="50" value="2500"
+                                    class="block w-full pl-8 pr-16 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg font-bold text-slate-800 transition-all duration-200"
+                                    placeholder="Rate per quintal">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 text-xs font-semibold">per Qtl</span>
+                                </div>
+                            </div>
+                            <input type="range" id="avgRateSlider" min="500" max="15000" step="100" value="2500" 
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                        </div>
+
+                        <!-- Optional Mandi Extra Expenses -->
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-3">
+                            <button type="button" onclick="toggleMandiExpenses()" class="flex items-center justify-between w-full text-left">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-calculator text-slate-500"></i>
+                                    <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">मण्डी अन्य खर्चे (Mandi Expenses - Optional)</span>
+                                </div>
+                                <i id="mandiChevron" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                            </button>
+                            
+                            <div id="mandiExpensesContent" class="hidden space-y-3 pt-2 border-t border-slate-200">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Mandi Tax / Shulk (%)</label>
+                                        <input type="number" id="mandiTax" min="0" max="10" step="0.1" value="1.5" 
+                                            class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-center font-bold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Arhat / Commission (%)</label>
+                                        <input type="number" id="arhatCommission" min="0" max="10" step="0.1" value="2.0" 
+                                            class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-center font-bold">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Finance Checkbox (Refinance Toggle) -->
+                        <div class="bg-indigo-50/50 rounded-xl p-4 border border-indigo-100 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-500 text-white p-2 rounded-lg">
+                                        <i class="fa-solid fa-hand-holding-dollar text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-indigo-950">क्या आप फाइनेंस लेना चाहते हैं?</h4>
+                                        <p class="text-xs text-indigo-700">Refinance purchased crop</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="enableFinance" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
+
+                            <!-- Conditional Finance Inputs -->
+                            <div id="financeInputsBlock" class="space-y-4 pt-3 border-t border-indigo-100 transition-all duration-300">
+                                
+                                <div class="space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <label for="financePercentage" class="font-bold text-slate-700">
+                                            कितने % फाइनेंस होगा? <span class="text-[10px] text-slate-400">(Finance LTV %)</span>
+                                        </label>
+                                        <span class="font-bold text-indigo-700" id="financePercentVal">75%</span>
+                                    </div>
+                                    <div class="relative rounded-xl shadow-sm">
+                                        <input type="number" id="financePercentage" min="10" max="95" step="1" value="75"
+                                            class="block w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-bold text-slate-800 text-sm">
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <span class="text-slate-400 text-xs font-semibold">%</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" id="financePercentSlider" min="10" max="95" step="5" value="75" 
+                                        class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                                </div>
+
+                                <div class="space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <label for="stopThreshold" class="font-bold text-slate-700">
+                                            किस लिमिट तक फाइनेंस चक्र चलाना है? <span class="text-[10px] text-slate-400">(Refinance Stop Limit)</span>
+                                        </label>
+                                        <span class="font-bold text-slate-600" id="stopLimitVal">₹2,00,000</span>
+                                    </div>
+                                    <div class="relative rounded-xl shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-slate-400 font-semibold text-xs">₹</span>
+                                        </div>
+                                        <input type="number" id="stopThreshold" min="50000" step="10000" value="200000"
+                                            class="block w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-800 text-sm">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 italic">
+                                        *नियम: जब तक फाइनेंस से मिलने वाली नई रकम इस सीमा से ऊपर रहेगी, रिफाइनेंसिंग चक्र चलता रहेगा।
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                
+                <!-- Quick Info / Mandi Tip Card -->
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-teal-100 rounded-2xl p-5 shadow-sm space-y-3">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-teal-600"></i>
+                        यह गणित मंडी में कैसे काम करता है?
+                    </h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        जब आप अपनी 10 लाख रुपयों की फसल मंडी में लेते हैं, तो उसे वेयरहाउस रसीद (WHR) या स्टॉक के 
+                        दस्तावेजों पर बैंक/फाइनेंसर से ७५% तक पैसा तुरंत वापस पा सकते हैं। मिले हुए पैसे (₹7.5 Lakh) 
+                        से आप फिर और फसल खरीदते हैं और दोबारा फाइनेंस लेते हैं। इसे <strong>"स्टॉक रिफाइनेंसिंग चक्र"</strong> कहते हैं।
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Side: Results & Compounding Breakdowns (Span 7) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- SUMMARY CARDS DASHBOARD -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    
+                    <!-- Card 1: Total Stock Bought -->
+                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-5 text-white card-shadow relative overflow-hidden">
+                        <div class="absolute right-2 bottom-2 text-white/10 text-6xl font-black">
+                            <i class="fa-solid fa-wheat-awn"></i>
+                        </div>
+                        <span class="block text-xs text-indigo-100 uppercase font-bold tracking-wider">कुल ख़रीदी (Total Stock)</span>
+                        <span class="block text-2xl md:text-3xl font-black mt-2" id="totalStockCard">0.00</span>
+                        <span class="block text-xs text-indigo-200 mt-1" id="totalBagsCard">0 बोरी (Approx)</span>
+                        <div class="mt-3 text-[11px] bg-white/15 px-2.5 py-1 rounded-md inline-block font-semibold">
+                            Total Weight (Quintals)
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Total Investment & Borrowing -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-100 card-shadow relative overflow-hidden">
+                        <div class="absolute right-2 bottom-2 text-slate-50 text-6xl font-black">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <span class="block text-xs text-slate-400 uppercase font-bold tracking-wider">कुल फाइनेंस (Refinanced Raised)</span>
+                        <span class="block text-2xl font-black text-slate-800 mt-2" id="totalFinanceRaisedCard">₹0</span>
+                        <span class="block text-[11px] text-teal-600 mt-1 font-bold" id="totalSpentCard">कुल ख़रीदी मूल्य: ₹0</span>
+                        <div class="mt-3 text-[11px] bg-slate-50 border border-slate-100 text-slate-600 px-2.5 py-1 rounded-md inline-block font-semibold">
+                            Outside Capital Raised
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Leverage Multiplier -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-100 card-shadow relative overflow-hidden">
+                        <div class="absolute right-2 bottom-2 text-slate-50 text-6xl font-black">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <span class="block text-xs text-slate-400 uppercase font-bold tracking-wider">कुल चक्र (Cycles) & लेवरेज</span>
+                        <span class="block text-2xl font-black text-teal-600 mt-2" id="leverageRatioCard">1.00x</span>
+                        <span class="block text-xs text-slate-500 mt-1" id="totalCyclesCard">0 बार रिफाइनेंस हुआ</span>
+                        <div class="mt-3 text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md inline-block font-semibold">
+                            Purchase Efficiency
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLE: Cycle details list -->
+                <div class="bg-white rounded-2xl card-shadow border border-slate-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-lg flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-list-ol"></i>
+                            </span>
+                            <div>
+                                <h3 class="font-extrabold text-slate-800 text-lg">चक्रवार विश्लेषण (Cycle Breakdown)</h3>
+                                <p class="text-xs text-slate-400">Step-by-step progress of refinancing loop</p>
+                            </div>
+                        </div>
+                        <button onclick="resetCalculator()" class="text-xs font-bold text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> रीसेट (Reset)
+                        </button>
+                    </div>
+
+                    <!-- Desktop & Tablet view Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold border-b border-slate-100">
+                                    <th class="px-6 py-3 text-center">चक्र (No.)</th>
+                                    <th class="px-6 py-3">शुरुआती पैसा (Start Cash)</th>
+                                    <th class="px-6 py-3 text-right">दर (Avg Rate)</th>
+                                    <th class="px-6 py-3 text-right">ख़रीद (Stock bought)</th>
+                                    <th class="px-6 py-3 text-right">नया फाइनेंस (Finance Recd.)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cycleTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                <!-- Dynamically filled cycles -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- No Finance Message state if Toggle is Off -->
+                    <div id="noFinanceState" class="hidden p-8 text-center space-y-3">
+                        <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800">फाइनेंस मोड बंद है (Single Cycle Only)</h4>
+                        <p class="text-xs text-slate-500 max-w-sm mx-auto">
+                            आप बिना फाइनेंस के सिर्फ़ शुरुआती पूँजी से फसल खरीद रहे हैं। साइकिल चलाने और स्टॉक बढ़ाने के लिए "फाइनेंस विकल्प" को चालू करें।
+                        </p>
+                    </div>
+                </div>
+
+                <!-- STOCK FILL GRAPHICAL REPRESENTATION -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">स्टॉक और लिवरेज विजुअलाइज़र (Stock Growth Visualization)</h4>
+                            <p class="text-[11px] text-slate-400">Comparing base purchase vs refinancing leverage</p>
+                        </div>
+                        <span class="text-xs font-bold bg-indigo-50 text-indigo-700 px-2 py-1 rounded" id="efficiencyBadge">Leverage: 1.0x</span>
+                    </div>
+
+                    <!-- Bar Chart Visual representation -->
+                    <div class="space-y-4 pt-2">
+                        <!-- Baseline Purchase (No leverage) -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-slate-500">
+                                <span>बेस ख़रीद (Original Cash Purchase)</span>
+                                <span id="baseStockLabel">0.00 Qtl</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-6 rounded-full overflow-hidden flex items-center">
+                                <div id="baseBar" class="bg-indigo-300 h-full rounded-full transition-all duration-500" style="width: 25%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Leveraged Purchase with Refinancing -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-indigo-700">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-angles-up animate-bounce text-emerald-500"></i>
+                                    फाइनेंस के साथ कुल ख़रीद (With Refinance Loop)
+                                </span>
+                                <span id="leveragedStockLabel" class="font-black">0.00 Qtl</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-8 rounded-full overflow-hidden flex items-center relative">
+                                <div id="leveragedBar" class="bg-gradient-to-r from-indigo-500 to-teal-500 h-full rounded-full transition-all duration-500" style="width: 75%"></div>
+                                <span class="absolute inset-0 flex items-center justify-center text-[10px] text-slate-500 font-bold mix-blend-multiply" id="growthMultiplierLabel">
+                                    +0% More Stock Added
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Detailed Footer / Notes -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h5 class="text-white font-bold mb-2">गणना के नियम (Calculation Logic)</h5>
+                    <p class="leading-relaxed text-[11px]">
+                        हम शुरुआती पूंजी से फसल दर (प्लस मंडी खर्चा, यदि चालू हो) के आधार पर पहला क्विंटल स्टॉक निकालते हैं। 
+                        फिर कुल खरीदे स्टॉक मूल्य का LTV % बैंक फाइनेंस के रूप में नया फंड जनरेट करता है। यदि यह नया फंड 
+                        स्टॉप लिमिट (₹2,00,000) से ऊपर रहता है, तो पुनः नया चक्र चलता है।
+                    </p>
+                </div>
+                <div>
+                    <h5 class="text-white font-bold mb-2">बोरी का अनुमान (Bags Estimation)</h5>
+                    <p class="leading-relaxed text-[11px]">
+                        आमतौर पर मंडी में गेहूं या धान की एक बोरी में लगभग <strong>५० किलोग्राम (0.50 क्विंटल)</strong> 
+                        माल आता है। हमने इसी मानक आधार (1 क्विंटल = 2 बोरी) पर बोरी की गणना दर्शाई है।
+                    </p>
+                </div>
+                <div>
+                    <h5 class="text-white font-bold mb-2">सुरक्षा और जोख़िम सूचना (Risk Disclaimer)</h5>
+                    <p class="leading-relaxed text-[11px]">
+                        वेयरहाउस रिफाइनेंसिंग में बाजार के उतार-चढ़ाव का खतरा रहता है। ब्याज दरें और वेयरहाउस किराये का खर्च 
+                        आपके शुद्ध लाभ को प्रभावित कर सकता है। वास्तविक व्यापार से पहले वित्तीय सलाहकार से परामर्श अवश्य लें।
+                    </p>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-slate-800 text-center flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p>&copy; 2026 Mandi Trade Engine. Designed with visual excellence & responsive layouts.</p>
+                <div class="flex gap-4 text-lg">
+                    <span class="hover:text-white transition-colors cursor-pointer"><i class="fa-brands fa-whatsapp"></i></span>
+                    <span class="hover:text-white transition-colors cursor-pointer"><i class="fa-brands fa-telegram"></i></span>
+                    <span class="hover:text-white transition-colors cursor-pointer"><i class="fa-solid fa-envelope"></i></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const initialCapitalInput = document.getElementById('initialCapital');
+        const initialCapitalSlider = document.getElementById('initialCapitalSlider');
+        const initialCapitalWord = document.getElementById('initialCapitalWord');
+        
+        const avgRateInput = document.getElementById('avgRate');
+        const avgRateSlider = document.getElementById('avgRateSlider');
+        const avgRateVal = document.getElementById('avgRateVal');
+
+        const enableFinanceCheckbox = document.getElementById('enableFinance');
+        const financeInputsBlock = document.getElementById('financeInputsBlock');
+        const financePercentageInput = document.getElementById('financePercentage');
+        const financePercentSlider = document.getElementById('financePercentSlider');
+        const financePercentVal = document.getElementById('financePercentVal');
+
+        const stopThresholdInput = document.getElementById('stopThreshold');
+        const stopLimitVal = document.getElementById('stopLimitVal');
+
+        const mandiTaxInput = document.getElementById('mandiTax');
+        const arhatCommissionInput = document.getElementById('arhatCommission');
+
+        // Results Card selectors
+        const totalStockCard = document.getElementById('totalStockCard');
+        const totalBagsCard = document.getElementById('totalBagsCard');
+        const totalFinanceRaisedCard = document.getElementById('totalFinanceRaisedCard');
+        const totalSpentCard = document.getElementById('totalSpentCard');
+        const leverageRatioCard = document.getElementById('leverageRatioCard');
+        const totalCyclesCard = document.getElementById('totalCyclesCard');
+
+        const cycleTableBody = document.getElementById('cycleTableBody');
+        const noFinanceState = document.getElementById('noFinanceState');
+
+        // Chart representation selectors
+        const baseStockLabel = document.getElementById('baseStockLabel');
+        const leveragedStockLabel = document.getElementById('leveragedStockLabel');
+        const baseBar = document.getElementById('baseBar');
+        const leveragedBar = document.getElementById('leveragedBar');
+        const efficiencyBadge = document.getElementById('efficiencyBadge');
+        const growthMultiplierLabel = document.getElementById('growthMultiplierLabel');
+
+        // Helper function: Format to Indian Currency format
+        function formatIndianCurrency(num) {
+            const parsed = Math.round(num);
+            return parsed.toLocaleString('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            });
+        }
+
+        // Helper function to format Lakh words
+        function getLakhText(num) {
+            if (num >= 10000000) {
+                return `₹${(num / 10000000).toFixed(2)} Crore`;
+            } else if (num >= 100000) {
+                return `₹${(num / 100000).toFixed(2)} Lakhs`;
+            } else {
+                return formatIndianCurrency(num);
+            }
+        }
+
+        // Toggle extra Mandi Expenses Accordion
+        let isMandiExpOpen = false;
+        function toggleMandiExpenses() {
+            const content = document.getElementById('mandiExpensesContent');
+            const chevron = document.getElementById('mandiChevron');
+            isMandiExpOpen = !isMandiExpOpen;
+            if (isMandiExpOpen) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        // Core calculation engine
+        function calculate() {
+            // Get inputs
+            const initialCapital = parseFloat(initialCapitalInput.value) || 0;
+            const avgRate = parseFloat(avgRateInput.value) || 0;
+            const isFinanceEnabled = enableFinanceCheckbox.checked;
+            const financePercent = parseFloat(financePercentageInput.value) || 0;
+            const stopThreshold = parseFloat(stopThresholdInput.value) || 200000;
+
+            const mandiTax = parseFloat(mandiTaxInput.value) || 0;
+            const arhatCommission = parseFloat(arhatCommissionInput.value) || 0;
+
+            // Update Input Labels
+            initialCapitalWord.innerText = getLakhText(initialCapital);
+            avgRateVal.innerText = `₹${avgRate.toLocaleString('en-IN')} / Qtl`;
+            financePercentVal.innerText = `${financePercent}%`;
+            stopLimitVal.innerText = formatIndianCurrency(stopThreshold);
+
+            // Hide/Show conditional finance section
+            if (isFinanceEnabled) {
+                financeInputsBlock.classList.remove('hidden');
+                noFinanceState.classList.add('hidden');
+                document.querySelector('table').classList.remove('hidden');
+            } else {
+                financeInputsBlock.classList.add('hidden');
+                noFinanceState.classList.remove('hidden');
+                document.querySelector('table').classList.add('hidden');
+            }
+
+            // Sync Sliders with text fields
+            if (initialCapitalSlider.value !== initialCapital) initialCapitalSlider.value = initialCapital;
+            if (avgRateSlider.value !== avgRate) avgRateSlider.value = avgRate;
+            if (financePercentSlider.value !== financePercent) financePercentSlider.value = financePercent;
+
+            // Setup rates including extra Mandi charges (if any)
+            // Extra expenses increase the real effective rate of buying crop
+            const effectiveTaxFactor = 1 + ((mandiTax + arhatCommission) / 100);
+            const effectiveRate = avgRate * effectiveTaxFactor;
+
+            // Arrays to store history
+            let cycles = [];
+            let currentCash = initialCapital;
+            let totalStock = 0;
+            let totalFinanceRaised = 0;
+            let totalSpent = 0;
+
+            let cycleNum = 1;
+            let keepRunning = true;
+
+            // Baseline calculations (without leverage / 1st buy)
+            const baseStock = avgRate > 0 ? (initialCapital / effectiveRate) : 0;
+
+            while (keepRunning && avgRate > 0 && currentCash > 0) {
+                // How much crop we purchase with currently available cash
+                const stockBought = currentCash / effectiveRate;
+                const costOfPurchase = currentCash; // We spend all active cash in this cycle to buy crop
+
+                totalStock += stockBought;
+                totalSpent += costOfPurchase;
+
+                let nextCash = 0;
+                
+                if (isFinanceEnabled) {
+                    // Refinance is percentage of our purchased crop spent money
+                    nextCash = costOfPurchase * (financePercent / 100);
+                }
+
+                cycles.push({
+                    cycleNum: cycleNum,
+                    startCash: currentCash,
+                    effectiveRate: effectiveRate,
+                    stockBought: stockBought,
+                    financeReceived: isFinanceEnabled ? nextCash : 0
+                });
+
+                if (isFinanceEnabled && nextCash > stopThreshold && cycleNum < 20) {
+                    totalFinanceRaised += nextCash;
+                    currentCash = nextCash;
+                    cycleNum++;
+                } else {
+                    keepRunning = false;
+                }
+            }
+
+            // Update summary cards
+            totalStockCard.innerText = `${totalStock.toFixed(2)} Qtl`;
+            totalBagsCard.innerText = `${(totalStock * 2).toLocaleString('en-IN', {maximumFractionDigits: 0})} बोरी (50 Kg Bags Approx)`;
+            totalFinanceRaisedCard.innerText = formatIndianCurrency(totalFinanceRaised);
+            totalSpentCard.innerText = `कुल ख़रीदी मूल्य: ${formatIndianCurrency(totalSpent)}`;
+
+            const leverageFactor = initialCapital > 0 ? (totalStock / (initialCapital / effectiveRate)) : 1;
+            leverageRatioCard.innerText = `${leverageFactor.toFixed(2)}x`;
+            totalCyclesCard.innerText = `${cycles.length} बार ख़रीदी चक्र पूर्ण`;
+
+            // Draw table
+            renderTable(cycles);
+
+            // Visual chart updates
+            baseStockLabel.innerText = `${baseStock.toFixed(2)} Qtl`;
+            leveragedStockLabel.innerText = `${totalStock.toFixed(2)} Qtl`;
+            
+            // Percentage visual bars
+            const maxVal = Math.max(totalStock, baseStock) || 1;
+            const basePercent = (baseStock / maxVal) * 100;
+            const leveragedPercent = (totalStock / maxVal) * 100;
+
+            baseBar.style.width = `${basePercent}%`;
+            leveragedBar.style.width = `${leveragedPercent}%`;
+
+            efficiencyBadge.innerText = `Leverage Capacity: ${leverageFactor.toFixed(1)}x`;
+            const addedPercent = baseStock > 0 ? (((totalStock - baseStock) / baseStock) * 100).toFixed(0) : 0;
+            growthMultiplierLabel.innerText = `+${addedPercent}% अधिक फ़सल ख़रीदी (Leveraged Stock Added)`;
+        }
+
+        // Render steps inside table
+        function renderTable(cycles) {
+            cycleTableBody.innerHTML = '';
+            cycles.forEach((cycle) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+                
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-800 font-bold text-xs">
+                            ${cycle.cycleNum}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-slate-900 font-bold">${formatIndianCurrency(cycle.startCash)}</div>
+                        <div class="text-[10px] text-slate-400">Trading Capital</div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="text-slate-800 font-medium">₹${cycle.effectiveRate.toFixed(2)}</div>
+                        <div class="text-[10px] text-slate-400">incl. Expenses</div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="text-teal-700 font-extrabold">${cycle.stockBought.toFixed(2)} Qtl</div>
+                        <div class="text-[10px] text-slate-400">Approx ${(cycle.stockBought * 2).toFixed(0)} Bags</div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="text-indigo-600 font-extrabold">
+                            ${cycle.financeReceived > 0 ? formatIndianCurrency(cycle.financeReceived) : '<span class="text-slate-400 font-normal">N/A</span>'}
+                        </div>
+                        <div class="text-[10px] text-indigo-400">${cycle.financeReceived > 0 ? 'Released Cash' : 'Stopped / Capital Low'}</div>
+                    </td>
+                `;
+                cycleTableBody.appendChild(tr);
+            });
+        }
+
+        // Reset inputs to default values
+        function resetCalculator() {
+            initialCapitalInput.value = 1000000;
+            initialCapitalSlider.value = 1000000;
+            avgRateInput.value = 2500;
+            avgRateSlider.value = 2500;
+            enableFinanceCheckbox.checked = true;
+            financePercentageInput.value = 75;
+            financePercentSlider.value = 75;
+            stopThresholdInput.value = 200000;
+            mandiTaxInput.value = 1.5;
+            arhatCommissionInput.value = 2.0;
+            
+            calculate();
+        }
+
+        // Sync inputs and range sliders
+        function syncInputs() {
+            // Initial Capital Sync
+            initialCapitalSlider.addEventListener('input', (e) => {
+                initialCapitalInput.value = e.target.value;
+                calculate();
+            });
+            initialCapitalInput.addEventListener('input', (e) => {
+                initialCapitalSlider.value = e.target.value;
+                calculate();
+            });
+
+            // Avg Rate Sync
+            avgRateSlider.addEventListener('input', (e) => {
+                avgRateInput.value = e.target.value;
+                calculate();
+            });
+            avgRateInput.addEventListener('input', (e) => {
+                avgRateSlider.value = e.target.value;
+                calculate();
+            });
+
+            // Finance Percent Sync
+            financePercentSlider.addEventListener('input', (e) => {
+                financePercentageInput.value = e.target.value;
+                calculate();
+            });
+            financePercentageInput.addEventListener('input', (e) => {
+                financePercentSlider.value = e.target.value;
+                calculate();
+            });
+
+            // Stop Threshold & Checkbox trigger
+            stopThresholdInput.addEventListener('input', calculate);
+            enableFinanceCheckbox.addEventListener('change', calculate);
+            mandiTaxInput.addEventListener('input', calculate);
+            arhatCommissionInput.addEventListener('input', calculate);
+        }
+
+        // Initialize application on window load
+        window.onload = function() {
+            syncInputs();
+            calculate();
+        };
+    </script>
+</body>
+</html>
